@@ -1,6 +1,6 @@
 # routemsgsrv
 
-The message routing reminds a wellknown change-making problem which can be solved using various dynamic programming or greedy methods.
+The message routing problem reminds a wellknown change-making one which can be solved using various dynamic programming or greedy methods.
 Currently the greedy method is implemented only.
 The REST server is running on AWS micro instance and can be tested by running the following tests:
 
@@ -14,5 +14,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"message": "SendHub Rocks"
 ```
 
 
-
-
+**TODO**
+* optimize, add more efficient routing method
+* improve error handling, e.g. for invalid numbers replace too much detailed with short and infomative 
+* authentication maybe...

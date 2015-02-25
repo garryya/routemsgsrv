@@ -64,30 +64,36 @@ class WBSRouteMsgRoot(resource.Resource):
 
 class WBSRouteMsgGreedy(WBSRouteMsgRoot):
     isLeaf = True
+
+    def _dogreedy(self, recipient, relays_subset, routes, recipients):
+        for relay in relays_subset:
+            if recipient >= len(recipients):
+                break
+            LOG.debug('relay %s (rp=%d)', relay, recipient)
+            throughput = relay['throughput']
+            if relay['subnet'] not in routes:
+                routes[relay['subnet']] = {'ip':relay['subnet'], 'recipients':[]}
+            routes[relay['subnet']]['recipients'] += recipients[recipient:recipient+throughput]
+            recipient += throughput
+        return recipient
+
     def _handleRequest(self, data):
         recipients = data['recipients']
         LOG.debug('recipients: %s', recipients)
-
         messages_number = len(recipients)
         relays_subset = { k:d for k,d in relays.items() if d['throughput'] <= messages_number}
         relays_subset = sorted(relays_subset.values(), key=lambda x:x['throughput'], reverse=True)
-
-        result = {'message': 'SendHub Rocks Back','routes': []}
-        rpointer = 0
-        for relay in relays_subset:
-            if rpointer >= messages_number:
-                break
-            LOG.debug('relay %s (rp=%d)', relay, rpointer)
-            throughput = relay['throughput']
-            route = {'ip':relay['subnet'], 'recipients':recipients[rpointer:rpointer+throughput]}
-            result['routes'].append(route)
-            rpointer += throughput
+        routes = {}
+        recipient = 0
+        while recipient < messages_number:
+            recipient = self._dogreedy(recipient, relays_subset, routes, recipients)
+        result = {'message': 'SendHub Rocks Back','routes': routes.values()}
         return result
 
 class WBSRouteMsgTwo(WBSRouteMsgRoot):
     isLeaf = True
     def _handleRequest(self, data):
-        return 'TWO::Dunno yet'
+        return 'TWO::not yet'
 
 
 ap = argparse.ArgumentParser()

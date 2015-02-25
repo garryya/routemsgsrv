@@ -90,10 +90,32 @@ class WBSRouteMsgGreedy(WBSRouteMsgRoot):
         result = {'message': 'SendHub Rocks Back','routes': routes.values()}
         return result
 
-class WBSRouteMsgTwo(WBSRouteMsgRoot):
+class WBSRouteMsgGreedy2(WBSRouteMsgRoot):
     isLeaf = True
+
     def _handleRequest(self, data):
-        return 'TWO::not yet'
+        recipients = data['recipients']
+        LOG.debug('recipients: %s', recipients)
+        messages_number = len(recipients)
+        relays_subset = { k:d for k,d in relays.items() if d['throughput'] <= messages_number}
+        relays_subset = sorted(relays_subset.values(), key=lambda x:x['throughput'], reverse=True)
+        routes = {}
+        recipient = 0
+        for relay in relays_subset:
+            if recipient >= len(recipients):
+                break
+            throughput = relay['throughput']
+            nblocks = messages_number / throughput
+            if nblocks:
+                LOG.debug('relay %s (rp=%d, throuput=%d, nblocks=%d)', relay, recipient, throughput, nblocks)
+                if relay['subnet'] not in routes:
+                    routes[relay['subnet']] = {'ip':relay['subnet'], 'recipients':[]}
+                nmessages = throughput*nblocks
+                routes[relay['subnet']]['recipients'] += recipients[recipient:recipient+nmessages]
+                recipient += nmessages
+                messages_number -= nmessages
+        result = {'message': 'SendHub Rocks Back','routes': routes.values()}
+        return result
 
 
 ap = argparse.ArgumentParser()
@@ -121,7 +143,7 @@ if __name__ == '__main__':
     LOG.info('Starting service...')
     root = WBSRouteMsgRoot()
     root.putChild('greedy', WBSRouteMsgGreedy())
-    root.putChild('two', WBSRouteMsgTwo())
+    root.putChild('greedy2', WBSRouteMsgGreedy2())
     site = server.Site(root)
     reactor.listenTCP(8080,site)
     reactor.run()

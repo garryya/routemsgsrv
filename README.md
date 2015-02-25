@@ -19,7 +19,6 @@ py.test --server=54.158.140.192
 ```
 
 **TODO**
-* optimize, add more efficient routing method
-** + unittest
+* optimize, add more efficient routing method (+unittest)
 * improve error handling, e.g. for invalid numbers replace too much detailed with short and infomative 
 * authentication maybe...

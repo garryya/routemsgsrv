@@ -13,6 +13,10 @@ or using CURL:
 curl -X POST -H "Content-Type: application/json" -d '{"message": "SendHub Rocks", "recipients": ["111-111-1111"]}' http://54.158.140.192:8080/greedy
 ```
 
+or unit test:
+```
+py.test --server=54.158.140.192
+```
 
 **TODO**
 * optimize, add more efficient routing method

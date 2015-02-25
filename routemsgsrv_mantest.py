@@ -1,11 +1,10 @@
 #!/usr/bin/python
 
 import httplib2
-from datetime import datetime
 import simplejson
 import argparse
+import socket
 
-#defaultTestDATA = {'woggle': {'version': 1234, 'updated': str(datetime.now()),}}
 defaultTestDATA = {
         "message": "SendHub Rocks",
         "recipients": [
@@ -25,9 +24,12 @@ url = 'http://%s:8080/%s' % (rap.server_ip, rap.path)
 
 jsondata = simplejson.dumps(rap.data)
 h = httplib2.Http()
-resp, content = h.request(url,
-                          rap.command,
-                          jsondata,
-                          headers={'Content-Type': 'application/json'})
-print url
-print content
+try:
+    resp, content = h.request(url,
+                              rap.command,
+                              jsondata,
+                              headers={'Content-Type': 'application/json'})
+    print url
+    print content
+except socket.error:
+    print 'Failed connecting to the server:', url

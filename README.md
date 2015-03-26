@@ -1,6 +1,8 @@
 # routemsgsrv
 
-## Messaging
+#### HTTP REST Message Routing service
+
+(see [problem description](https://github.com/garryya/routemsgsrv/blob/master/TASK-DESCRIPTION.pdf) for the details)
 
 The message routing problem reminds a wellknown change-making one which can be solved using various dynamic programming or greedy methods.
 Currently the **greedy** and improved **greedy2** methods are implemented.

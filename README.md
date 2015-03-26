@@ -1,5 +1,7 @@
 # routemsgsrv
 
+## Messaging
+
 The message routing problem reminds a wellknown change-making one which can be solved using various dynamic programming or greedy methods.
 Currently the **greedy** and improved **greedy2** methods are implemented.
 The greedy method may fail to give an optimal solution and it's complexity is O(N) where N is number of recipients.  
